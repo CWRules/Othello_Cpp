@@ -1,0 +1,11 @@
+# Blank lines and lines starting with '#' are ignored
+# W = White disc, B = Black disc, any other character is an empty cell
+
+--------
+--------
+--------
+---WB---
+---BW---
+--------
+--------
+--------
