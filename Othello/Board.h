@@ -5,6 +5,7 @@
 #define BLACK -1
 
 #include <vector>
+#include <string>
 
 class Board
 {

@@ -1,3 +1,7 @@
+/*
+This class is used to store the state of an Othello board.
+*/
+
 #include "Board.h"
 #include <fstream>
 #include <sstream>
@@ -5,7 +9,10 @@
 
 Board::Board(std::string fileName)
 {
-	ReadBoardState(fileName);
+	if (fileName != "")
+	{
+		ReadBoardState(fileName);
+	}
 }
 
 
@@ -23,6 +30,7 @@ void Board::ReadBoardState(std::string fileName)
 	{
 		m_BoardState.clear();
 		std::string line;
+
 		while (std::getline(inputFile, line))
 		{
 			if (line == "" || line[0] == '#')
@@ -56,25 +64,32 @@ void Board::ReadBoardState(std::string fileName)
 // Returns a string representation of the current board state
 std::string Board::PrintBoardState()
 {
-	std::string output;
-	for (std::vector<int> row : m_BoardState)
+	std::string output = "  ";
+	for (int i = 0; i < m_BoardState[0].size(); ++i)
 	{
-		for (int i : row)
+		output += std::to_string(i) + " ";
+	}
+	output += "\n";
+
+	for (int i = 0; i < m_BoardState.size(); ++i)
+	{
+		output += std::to_string(i) + "|";
+		for (int cell : m_BoardState[i])
 		{
-			if (i == WHITE)
+			if (cell == WHITE)
 			{
-				output.append("W");
+				output += "W|";
 			}
-			else if (i == BLACK)
+			else if (cell == BLACK)
 			{
-				output.append("B");
+				output += "B|";
 			}
 			else
 			{
-				output.append("-");
+				output += " |";
 			}
 		}
-		output.append("\n");
+		output += "\n";
 	}
 	return output;
 }

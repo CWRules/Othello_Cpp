@@ -1,9 +1,12 @@
-// Othello.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/*
+Othello-playing AI
+
+Author: Connor Wilson
+Date: 2020-08-20
+*/
 
 #include "Board.h"
 #include <iostream>
-#include <string>
 
 int main()
 {
