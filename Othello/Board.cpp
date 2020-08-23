@@ -4,7 +4,6 @@ This class is used to store the state of an Othello board.
 
 #include "Board.h"
 #include <fstream>
-#include <sstream>
 
 
 Board::Board(std::string fileName)
@@ -41,13 +40,13 @@ void Board::ReadBoardState(std::string fileName)
 			std::vector<int> row;
 			for (char& c : line)
 			{
-				if (c == 'W')
-				{
-					row.push_back(WHITE);
-				}
-				else if (c == 'B')
+				if (c == 'B')
 				{
 					row.push_back(BLACK);
+				}
+				else if (c == 'W')
+				{
+					row.push_back(WHITE);
 				}
 				else
 				{
@@ -65,13 +64,16 @@ void Board::ReadBoardState(std::string fileName)
 std::string Board::PrintBoardState()
 {
 	std::string output = "  ";
-	for (int i = 0; i < m_BoardState[0].size(); ++i)
+	if (m_BoardState.size() > 0)
 	{
-		output += std::to_string(i) + " ";
+		for (unsigned int i = 0; i < m_BoardState[0].size(); ++i)
+		{
+			output += std::to_string(i) + " ";
+		}
+		output += "\n";
 	}
-	output += "\n";
 
-	for (int i = 0; i < m_BoardState.size(); ++i)
+	for (unsigned int i = 0; i < m_BoardState.size(); ++i)
 	{
 		output += std::to_string(i) + "|";
 		for (int cell : m_BoardState[i])

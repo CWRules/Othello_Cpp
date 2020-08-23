@@ -5,11 +5,12 @@ Author: Connor Wilson
 Date: 2020-08-20
 */
 
-#include "Board.h"
+#include "TreeNode.h"
 #include <iostream>
 
 int main()
 {
-	Board gameBoard("..\\starting_board.txt");
-	std::cout << gameBoard.PrintBoardState();
+	Board startingBoard("..\\starting_board.txt");
+	TreeNode startingNode(startingBoard);
+	std::cout << startingNode.m_Board.PrintBoardState();
 }

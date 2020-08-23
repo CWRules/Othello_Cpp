@@ -1,8 +1,8 @@
 #pragma once
 
 #define EMPTY 0
-#define WHITE 1
 #define BLACK -1
+#define WHITE 1
 
 #include <vector>
 #include <string>
