@@ -10,7 +10,6 @@ Date: 2020-08-20
 
 int main()
 {
-	Board startingBoard("..\\starting_board.txt");
-	TreeNode startingNode(startingBoard);
-	std::cout << startingNode.m_Board.PrintBoardState();
+	TreeNode startingNode("..\\starting_board.txt");
+	std::cout << startingNode.PrintBoardState();
 }

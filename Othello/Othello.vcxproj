@@ -155,11 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Board.h" />
     <ClInclude Include="TreeNode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Board.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="Othello.cpp" />
   </ItemGroup>
