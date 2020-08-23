@@ -6,18 +6,31 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include <fstream>
 
 
-// Construct a child for an existng node
-TreeNode::TreeNode(TreeNode* parent)
-{
-	m_Parent = parent;
-}
-
-
 // Construct a root note by reading in a board state
 TreeNode::TreeNode(std::string fileName)
 {
 	m_Parent = NULL;
 	ReadBoardState(fileName);
+
+	// Initialize set of adjacent cells
+	for (unsigned int i = 0; i < m_BoardState.size(); ++i)
+	{
+		for (unsigned int j = 0; j < m_BoardState[i].size(); ++j)
+		{
+			if (m_BoardState[i][j] != EMPTY)
+			{
+				AddAdjacentCells(i, j);
+			}
+		}
+	}
+}
+
+
+// Construct a child for an existng node
+TreeNode::TreeNode(TreeNode* parent)
+{
+	m_Parent = parent;
+	parent->m_Children.push_back(this);
 }
 
 
@@ -105,4 +118,29 @@ std::string TreeNode::PrintBoardState()
 		output += "\n";
 	}
 	return output;
+}
+
+
+// Add cells adjacent to the given one to the set of adjacent cells for this node
+void TreeNode::AddAdjacentCells(int i, int j)
+{
+	std::vector<std::pair<int, int>> adjacentCells = 
+	{ std::make_pair(i - 1, j - 1),
+	  std::make_pair(i, j - 1),
+	  std::make_pair(i + 1, j - 1),
+	  std::make_pair(i + 1, j),
+	  std::make_pair(i + 1, j + 1),
+	  std::make_pair(i, j + 1),
+	  std::make_pair(i - 1, j + 1),
+	  std::make_pair(i - 1, j) };
+	
+	for (std::pair<int, int> cell : adjacentCells)
+	{
+		if (cell.first >= 0 && cell.first < m_BoardState.size()
+			&& cell.second >= 0 && cell.second < m_BoardState[cell.first].size()
+			&& m_BoardState[cell.first][cell.second] == EMPTY)
+		{
+			m_AdjacentCells.insert(cell);
+		}
+	}
 }
