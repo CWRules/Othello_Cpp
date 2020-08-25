@@ -122,20 +122,12 @@ std::string TreeNode::PrintBoardState()
 
 
 // Add cells adjacent to the given one to the set of adjacent cells for this node
-void TreeNode::AddAdjacentCells(int i, int j)
+void TreeNode::AddAdjacentCells(int x, int y)
 {
-	std::vector<std::pair<int, int>> adjacentCells = 
-	{ std::make_pair(i - 1, j - 1),
-	  std::make_pair(i, j - 1),
-	  std::make_pair(i + 1, j - 1),
-	  std::make_pair(i + 1, j),
-	  std::make_pair(i + 1, j + 1),
-	  std::make_pair(i, j + 1),
-	  std::make_pair(i - 1, j + 1),
-	  std::make_pair(i - 1, j) };
-	
-	for (std::pair<int, int> cell : adjacentCells)
+	for (std::pair<int, int> dir : DIRECTIONS)
 	{
+		std::pair<int, int> cell = std::make_pair(dir.first + x, dir.second + y);
+
 		if (cell.first >= 0 && cell.first < m_BoardState.size()
 			&& cell.second >= 0 && cell.second < m_BoardState[cell.first].size()
 			&& m_BoardState[cell.first][cell.second] == EMPTY)
@@ -143,4 +135,10 @@ void TreeNode::AddAdjacentCells(int i, int j)
 			m_AdjacentCells.insert(cell);
 		}
 	}
+}
+
+
+// See if the given move is valid, and if so make a child node for the new board state
+void TreeNode::MakeChild(int x, int y, int turn)
+{
 }
