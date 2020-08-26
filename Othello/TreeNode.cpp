@@ -19,7 +19,7 @@ TreeNode::TreeNode(std::string fileName)
 		{
 			if (m_BoardState[i][j] != EMPTY)
 			{
-				AddAdjacentCells(i, j);
+				UpdateAdjacentCells(i, j);
 			}
 		}
 	}
@@ -27,10 +27,8 @@ TreeNode::TreeNode(std::string fileName)
 
 
 // Construct a child for an existng node
-TreeNode::TreeNode(TreeNode* parent)
+TreeNode::TreeNode()
 {
-	m_Parent = parent;
-	parent->m_Children.push_back(this);
 }
 
 
@@ -121,12 +119,14 @@ std::string TreeNode::PrintBoardState()
 }
 
 
-// Add cells adjacent to the given one to the set of adjacent cells for this node
-void TreeNode::AddAdjacentCells(int x, int y)
+// Remove the given cell from the set of adjacent cells and add the ones adjacent to it
+void TreeNode::UpdateAdjacentCells(int x, int y)
 {
+	m_AdjacentCells.erase(std::make_pair(x, y));
+
 	for (std::pair<int, int> dir : DIRECTIONS)
 	{
-		std::pair<int, int> cell = std::make_pair(dir.first + x, dir.second + y);
+		std::pair<int, int> cell = std::make_pair(x + dir.first, y + dir.second);
 
 		if (cell.first >= 0 && cell.first < m_BoardState.size()
 			&& cell.second >= 0 && cell.second < m_BoardState[cell.first].size()
@@ -138,7 +138,44 @@ void TreeNode::AddAdjacentCells(int x, int y)
 }
 
 
-// See if the given move is valid, and if so make a child node for the new board state
-void TreeNode::MakeChild(int x, int y, int turn)
+// Check adjacent cells to see which are valid moves and make child nodes as required
+void TreeNode::MakeChildren(int turn)
 {
+	for (std::pair<int, int> move : m_AdjacentCells)
+	{
+		std::vector<std::pair<int, int>> cellsToFlip;
+
+		for (std::pair<int, int> dir : DIRECTIONS)
+		{
+			std::vector<std::pair<int, int>> newCells;
+			std::pair<int, int> cell = std::make_pair(move.first + dir.first, move.second + dir.second);
+
+			while (cell.first >= 0 && cell.first < m_BoardState.size()
+				&& cell.second >= 0 && cell.second < m_BoardState[cell.first].size())
+			{
+				if (m_BoardState[cell.first][cell.second] == EMPTY)
+				{
+					break;
+				}
+				else if (m_BoardState[cell.first][cell.second] == turn)
+				{
+					cellsToFlip.insert(cellsToFlip.end(), newCells.begin(), newCells.end());
+				}
+				else
+				{
+					newCells.push_back(cell);
+				}
+				cell.first += dir.first;
+				cell.second += dir.second;
+			}
+		}
+
+		// If at least one cell is flipped, make a child node
+		if (cellsToFlip.size() > 0)
+		{
+			TreeNode* ChildNode = new TreeNode;
+			ChildNode->m_Parent = this;
+			m_Children.push_back(ChildNode);
+		}
+	}
 }

@@ -22,7 +22,7 @@ class TreeNode
 {
 public:
 	TreeNode(std::string fileName);
-	TreeNode(TreeNode* parent);
+	TreeNode();
 	~TreeNode();
 
 	void ReadBoardState(std::string fileName);
@@ -34,6 +34,7 @@ private:
 	std::vector<std::vector<int>> m_BoardState;
 	std::set<std::pair<int, int>> m_AdjacentCells;
 
-	void AddAdjacentCells(int x, int y);
-	void MakeChild(int x, int y, int turn);
+	void UpdateAdjacentCells(int x, int y);
+	public:////TESTING
+	void MakeChildren(int turn);
 };
