@@ -12,6 +12,4 @@ int main()
 {
 	TreeNode startingNode("..\\starting_board.txt");
 	std::cout << startingNode.PrintBoardState();
-
-	startingNode.MakeChildren(BLACK);////TESTING
 }

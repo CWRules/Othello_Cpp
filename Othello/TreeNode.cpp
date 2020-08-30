@@ -11,6 +11,7 @@ TreeNode::TreeNode(std::string fileName)
 {
 	m_Parent = NULL;
 	ReadBoardState(fileName);
+	m_Turn = BLACK;
 
 	// Initialize set of adjacent cells
 	for (unsigned int i = 0; i < m_BoardState.size(); ++i)
@@ -27,8 +28,10 @@ TreeNode::TreeNode(std::string fileName)
 
 
 // Construct a child for an existng node
-TreeNode::TreeNode()
+TreeNode::TreeNode(std::vector<std::vector<int>> boardState, int turn)
 {
+	m_BoardState = boardState;
+	m_Turn = turn;
 }
 
 
@@ -141,6 +144,8 @@ void TreeNode::UpdateAdjacentCells(int x, int y)
 // Check adjacent cells to see which are valid moves and make child nodes as required
 void TreeNode::MakeChildren(int turn)
 {
+	int nextTurn = (turn == BLACK ? WHITE : BLACK);
+
 	for (std::pair<int, int> move : m_AdjacentCells)
 	{
 		std::vector<std::pair<int, int>> cellsToFlip;
@@ -173,9 +178,30 @@ void TreeNode::MakeChildren(int turn)
 		// If at least one cell is flipped, make a child node
 		if (cellsToFlip.size() > 0)
 		{
-			TreeNode* ChildNode = new TreeNode;
+			TreeNode* ChildNode = new TreeNode(m_BoardState, nextTurn);
 			ChildNode->m_Parent = this;
 			m_Children.push_back(ChildNode);
+			ChildNode->m_AdjacentCells = m_AdjacentCells;
+			ChildNode->UpdateAdjacentCells(move.first, move.second);
 		}
 	}
+
+	// If no valid moves, make a single child which passes the turn
+	if (m_Children.size() == 0)
+	{
+		TreeNode* ChildNode = new TreeNode(m_BoardState, nextTurn);
+		ChildNode->m_Parent = this;
+		m_Children.push_back(ChildNode);
+		ChildNode->m_AdjacentCells = m_AdjacentCells;
+	}
+}
+
+
+// Recursively build the game tree
+void TreeNode::MakeTree()
+{
+	// Make a queue of nodes starting from root
+	// Call MakeChildren() for each and add children to queue
+	// Estimate time needed for next level and terminate search if too long
+	// Evaluate nodes
 }

@@ -22,19 +22,20 @@ class TreeNode
 {
 public:
 	TreeNode(std::string fileName);
-	TreeNode();
+	TreeNode(std::vector<std::vector<int>> boardState, int turn);
 	~TreeNode();
 
 	void ReadBoardState(std::string fileName);
 	std::string PrintBoardState();
+	void MakeTree();
 
 private:
 	TreeNode* m_Parent;
 	std::vector<TreeNode*> m_Children;
 	std::vector<std::vector<int>> m_BoardState;
 	std::set<std::pair<int, int>> m_AdjacentCells;
+	int m_Turn;
 
 	void UpdateAdjacentCells(int x, int y);
-	public:////TESTING
 	void MakeChildren(int turn);
 };
