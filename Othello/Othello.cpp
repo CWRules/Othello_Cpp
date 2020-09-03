@@ -12,4 +12,6 @@ int main()
 {
 	TreeNode startingNode("..\\starting_board.txt");
 	std::cout << startingNode.PrintBoardState();
+
+	TreeNode::MakeTree(&startingNode, 5);//// TESTING
 }

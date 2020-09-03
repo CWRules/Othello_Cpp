@@ -4,6 +4,7 @@ This class implements the tree of board states used by the AI to evaluate moves.
 
 #include "TreeNode.h"
 #include <fstream>
+#include <chrono>
 
 
 // Construct a root note by reading in a board state
@@ -12,6 +13,8 @@ TreeNode::TreeNode(std::string fileName)
 	m_Parent = NULL;
 	ReadBoardState(fileName);
 	m_Turn = BLACK;
+	m_Passed = false;
+	m_GameOver = false;
 
 	// Initialize set of adjacent cells
 	for (unsigned int i = 0; i < m_BoardState.size(); ++i)
@@ -32,6 +35,8 @@ TreeNode::TreeNode(std::vector<std::vector<int>> boardState, int turn)
 {
 	m_BoardState = boardState;
 	m_Turn = turn;
+	m_Passed = false;
+	m_GameOver = false;
 }
 
 
@@ -142,9 +147,9 @@ void TreeNode::UpdateAdjacentCells(int x, int y)
 
 
 // Check adjacent cells to see which are valid moves and make child nodes as required
-void TreeNode::MakeChildren(int turn)
+void TreeNode::MakeChildren()
 {
-	int nextTurn = (turn == BLACK ? WHITE : BLACK);
+	int nextTurn = (m_Turn == BLACK ? WHITE : BLACK);
 
 	for (std::pair<int, int> move : m_AdjacentCells)
 	{
@@ -162,7 +167,7 @@ void TreeNode::MakeChildren(int turn)
 				{
 					break;
 				}
-				else if (m_BoardState[cell.first][cell.second] == turn)
+				else if (m_BoardState[cell.first][cell.second] == m_Turn)
 				{
 					cellsToFlip.insert(cellsToFlip.end(), newCells.begin(), newCells.end());
 				}
@@ -178,30 +183,65 @@ void TreeNode::MakeChildren(int turn)
 		// If at least one cell is flipped, make a child node
 		if (cellsToFlip.size() > 0)
 		{
-			TreeNode* ChildNode = new TreeNode(m_BoardState, nextTurn);
-			ChildNode->m_Parent = this;
-			m_Children.push_back(ChildNode);
-			ChildNode->m_AdjacentCells = m_AdjacentCells;
-			ChildNode->UpdateAdjacentCells(move.first, move.second);
+			TreeNode* childNode = new TreeNode(m_BoardState, nextTurn);
+			childNode->m_Parent = this;
+			m_Children.push_back(childNode);
+			childNode->m_AdjacentCells = m_AdjacentCells;
+			childNode->UpdateAdjacentCells(move.first, move.second);
+
+			childNode->m_BoardState[move.first][move.second] = m_Turn;
+			for (std::pair<int, int> cell : cellsToFlip)
+			{
+				childNode->m_BoardState[cell.first][cell.second] = m_Turn;
+			}
 		}
 	}
 
 	// If no valid moves, make a single child which passes the turn
 	if (m_Children.size() == 0)
 	{
-		TreeNode* ChildNode = new TreeNode(m_BoardState, nextTurn);
-		ChildNode->m_Parent = this;
-		m_Children.push_back(ChildNode);
-		ChildNode->m_AdjacentCells = m_AdjacentCells;
+		TreeNode* childNode = new TreeNode(m_BoardState, nextTurn);
+		childNode->m_Parent = this;
+		m_Children.push_back(childNode);
+		childNode->m_AdjacentCells = m_AdjacentCells;
+		childNode->m_Passed = true;
+
+		if (m_Passed)
+		{
+			childNode->m_GameOver = true;
+		}
 	}
 }
 
 
 // Recursively build the game tree
-void TreeNode::MakeTree()
+void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 {
-	// Make a queue of nodes starting from root
-	// Call MakeChildren() for each and add children to queue
-	// Estimate time needed for next level and terminate search if too long
-	// Evaluate nodes
+	std::vector<TreeNode*> nodeList = { rootNode };
+	std::vector<TreeNode*> childNodeList;
+	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+
+	while (true)
+	{
+		for (TreeNode* node : nodeList)
+		{
+			if (node->m_Children.size() == 0 && node->m_GameOver == false)
+			{
+				node->MakeChildren();
+			}
+			childNodeList.insert(childNodeList.end(), node->m_Children.begin(), node->m_Children.end());
+		}
+
+		//// TODO: Estimate time for next level
+		std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
+		if (childNodeList.size() == 0 || std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count() > searchTime)
+		{
+			break;
+		}
+		else
+		{
+			nodeList = childNodeList;
+			childNodeList.clear();
+		}
+	}
 }

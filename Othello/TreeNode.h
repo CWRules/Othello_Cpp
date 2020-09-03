@@ -27,7 +27,7 @@ public:
 
 	void ReadBoardState(std::string fileName);
 	std::string PrintBoardState();
-	void MakeTree();
+	static void MakeTree(TreeNode* rootNode, int searchTime);
 
 private:
 	TreeNode* m_Parent;
@@ -35,7 +35,9 @@ private:
 	std::vector<std::vector<int>> m_BoardState;
 	std::set<std::pair<int, int>> m_AdjacentCells;
 	int m_Turn;
+	bool m_Passed;
+	bool m_GameOver;
 
 	void UpdateAdjacentCells(int x, int y);
-	void MakeChildren(int turn);
+	void MakeChildren();
 };
