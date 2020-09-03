@@ -5,6 +5,7 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include "TreeNode.h"
 #include <fstream>
 #include <chrono>
+#include <iostream>
 
 
 // Construct a root note by reading in a board state
@@ -217,12 +218,16 @@ void TreeNode::MakeChildren()
 // Recursively build the game tree
 void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 {
+	int depth = 1;
 	std::vector<TreeNode*> nodeList = { rootNode };
 	std::vector<TreeNode*> childNodeList;
 	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 
+	std::cout << "Building tree...\n";
 	while (true)
 	{
+		std::chrono::steady_clock::time_point layerStartTime = std::chrono::steady_clock::now();
+
 		for (TreeNode* node : nodeList)
 		{
 			if (node->m_Children.size() == 0 && node->m_GameOver == false)
@@ -232,16 +237,23 @@ void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 			childNodeList.insert(childNodeList.end(), node->m_Children.begin(), node->m_Children.end());
 		}
 
-		//// TODO: Estimate time for next level
+		// Estimate time for next layer
 		std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
-		if (childNodeList.size() == 0 || std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count() > searchTime)
+		int totalTime = (int)std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+		int layerTime = (int)std::chrono::duration_cast<std::chrono::seconds>(currentTime - layerStartTime).count();
+		int nextLayerTimeEstimate = layerTime * (childNodeList.size() / nodeList.size());
+		int totalTimeAfterNextLayer = totalTime + nextLayerTimeEstimate;
+
+		if (childNodeList.size() == 0 || totalTimeAfterNextLayer > searchTime)
 		{
-			break;
+			std::cout << "Stopped at depth " << depth  << " after " << totalTime << " seconds.\n";
+			return;
 		}
 		else
 		{
 			nodeList = childNodeList;
 			childNodeList.clear();
+			++depth;
 		}
 	}
 }
