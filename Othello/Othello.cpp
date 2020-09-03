@@ -10,9 +10,10 @@ Date: 2020-08-20
 
 int main()
 {
-	TreeNode startingNode("..\\starting_board.txt");
-	std::cout << startingNode.PrintBoardState();
+	TreeNode* startingNode = new TreeNode("..\\starting_board.txt");
 
 	//// TESTING
-	TreeNode::MakeTree(&startingNode, 10);
+	TreeNode::MakeTree(startingNode, 10);
+	TreeNode* newRoot = TreeNode::SelectMove(startingNode, std::make_pair(2, 3));
+	std::cout << newRoot->PrintBoardState();
 }

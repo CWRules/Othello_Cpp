@@ -5,6 +5,7 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include "TreeNode.h"
 #include <fstream>
 #include <chrono>
+#include <algorithm>
 #include <iostream>
 
 
@@ -265,6 +266,20 @@ void TreeNode::EvaluateNodes(TreeNode* rootNode)
 
 
 // Prune the tree so that a specific child becomes the new root
-void TreeNode::PruneTree(TreeNode* rootNode, std::pair<int, int> move)
+// If the given move is not vaid, return NULL. Otherwise return the new root node.
+TreeNode* TreeNode::SelectMove(TreeNode* rootNode, std::pair<int, int> move)
 {
+	TreeNode* newRoot = NULL;
+	for (TreeNode* node : rootNode->m_Children)
+	{
+		if (node->m_LastMove == move)
+		{
+			newRoot = node;
+			rootNode->m_Children.erase(std::remove(rootNode->m_Children.begin(), rootNode->m_Children.end(), node), rootNode->m_Children.end());
+			delete rootNode;
+			node->m_Parent = NULL;
+			break;
+		}
+	}
+	return newRoot;
 }

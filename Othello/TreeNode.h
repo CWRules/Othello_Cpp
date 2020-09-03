@@ -32,7 +32,7 @@ public:
 	std::string PrintBoardState();
 	static void MakeTree(TreeNode* rootNode, int searchTime);
 	static void EvaluateNodes(TreeNode* rootNode);
-	static void PruneTree(TreeNode* rootNode, std::pair<int, int> move);
+	static TreeNode* SelectMove(TreeNode* rootNode, std::pair<int, int> move);
 
 private:
 	TreeNode* m_Parent;
