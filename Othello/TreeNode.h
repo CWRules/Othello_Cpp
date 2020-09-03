@@ -18,16 +18,21 @@ const std::vector<std::pair<int, int>> DIRECTIONS =
 	  std::make_pair(-1, 1),
 	  std::make_pair(-1, 0) };
 
+const std::pair<int, int> PASS_TURN = std::make_pair(-1, -1);
+
+
 class TreeNode
 {
 public:
 	TreeNode(std::string fileName);
-	TreeNode(std::vector<std::vector<int>> boardState, int turn);
+	TreeNode(std::vector<std::vector<int>> boardState, int turn, std::pair<int, int> move);
 	~TreeNode();
 
 	void ReadBoardState(std::string fileName);
 	std::string PrintBoardState();
 	static void MakeTree(TreeNode* rootNode, int searchTime);
+	static void EvaluateNodes(TreeNode* rootNode);
+	static void PruneTree(TreeNode* rootNode, std::pair<int, int> move);
 
 private:
 	TreeNode* m_Parent;
@@ -35,7 +40,7 @@ private:
 	std::vector<std::vector<int>> m_BoardState;
 	std::set<std::pair<int, int>> m_AdjacentCells;
 	int m_Turn;
-	bool m_Passed;
+	std::pair<int, int> m_LastMove;
 	bool m_GameOver;
 
 	void UpdateAdjacentCells(int x, int y);
