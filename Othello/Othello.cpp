@@ -10,7 +10,7 @@ Date: 2020-08-20
 
 int main()
 {
-	TreeNode* startingNode = new TreeNode("..\\starting_board.txt");
+	TreeNode* startingNode = new TreeNode("..\\starting_board_small.txt");
 
 	//// TESTING
 	TreeNode::MakeTree(startingNode, 10);

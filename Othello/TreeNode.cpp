@@ -292,8 +292,21 @@ void TreeNode::EvaluateNode(TreeNode* node)
 // Determine the value of the board state in the given node
 void TreeNode::EvaluateBoardState(TreeNode* node)
 {
-	//// TODO: Just use random values for now. Update later.
-
+	// If the game is over, just count the discs of each color
+	if (node->m_GameOver)
+	{
+		for (std::vector<int> row : node->m_BoardState)
+		{
+			for (int cell : row)
+			{
+				node->m_Value += cell;
+			}
+		}
+		node->m_Value *= 1000;
+		return;
+	}
+	
+	// Random adjustment
 	node->m_Value = s_RandomDistribution(s_RandomGenerator);
 }
 
