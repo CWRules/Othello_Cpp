@@ -6,7 +6,6 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include <fstream>
 #include <chrono>
 #include <algorithm>
-#include <random>
 #include <iostream>
 
 
@@ -269,12 +268,7 @@ void TreeNode::EvaluateNode(TreeNode* node)
 {
 	if (node->m_Children.size() == 0)
 	{
-		// Evaluate the current board state
-		//// TODO: Just use random values for now. Update later.
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_real_distribution<> dis(-1.0, 1.0);
-		node->m_Value = dis(gen);
+		EvaluateBoardState(node);
 	}
 	else
 	{
@@ -292,6 +286,15 @@ void TreeNode::EvaluateNode(TreeNode* node)
 		node->m_Value = bestNode->m_Value;
 		node->m_BestChildNode = bestNode;
 	}
+}
+
+
+// Determine the value of the board state in the given node
+void TreeNode::EvaluateBoardState(TreeNode* node)
+{
+	//// TODO: Just use random values for now. Update later.
+
+	node->m_Value = s_RandomDistribution(s_RandomGenerator);
 }
 
 
@@ -313,3 +316,9 @@ TreeNode* TreeNode::SelectMove(TreeNode* rootNode, std::pair<int, int> move)
 	}
 	return newRoot;
 }
+
+
+// Used to generate random numbers for the evaluation function
+std::random_device TreeNode::s_RandomDevice;
+std::mt19937 TreeNode::s_RandomGenerator(s_RandomDevice());
+std::uniform_real_distribution<> TreeNode::s_RandomDistribution(-1.0, 1.0);

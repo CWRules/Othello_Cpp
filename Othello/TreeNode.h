@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <random>
 
 const std::vector<std::pair<int, int>> DIRECTIONS =
 	{ std::make_pair(-1, -1),
@@ -32,6 +33,7 @@ public:
 	std::string PrintBoardState();
 	static void MakeTree(TreeNode* rootNode, int searchTime);
 	static void EvaluateNode(TreeNode* node);
+	static void EvaluateBoardState(TreeNode* node);
 	static TreeNode* SelectMove(TreeNode* rootNode, std::pair<int, int> move);
 
 private:
@@ -47,4 +49,8 @@ private:
 
 	void UpdateAdjacentCells(int x, int y);
 	void MakeChildren();
+
+	static std::random_device s_RandomDevice;
+	static std::mt19937 s_RandomGenerator;
+	static std::uniform_real_distribution<> s_RandomDistribution;
 };
