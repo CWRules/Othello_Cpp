@@ -6,6 +6,7 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include <fstream>
 #include <chrono>
 #include <algorithm>
+#include <random>
 #include <iostream>
 
 
@@ -17,6 +18,8 @@ TreeNode::TreeNode(std::string fileName)
 	m_Turn = BLACK;
 	m_LastMove = PASS_TURN;
 	m_GameOver = false;
+	m_Value = 0;
+	m_BestChildNode = NULL;
 
 	// Initialize set of adjacent cells
 	for (unsigned int i = 0; i < m_BoardState.size(); ++i)
@@ -39,6 +42,8 @@ TreeNode::TreeNode(std::vector<std::vector<int>> boardState, int turn, std::pair
 	m_Turn = turn;
 	m_LastMove = move;
 	m_GameOver = false;
+	m_Value = 0;
+	m_BestChildNode = NULL;
 }
 
 
@@ -259,9 +264,34 @@ void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 }
 
 
-// Evaluate nodes in the tree
-void TreeNode::EvaluateNodes(TreeNode* rootNode)
+// Recursively evaluate nodes in the tree
+void TreeNode::EvaluateNode(TreeNode* node)
 {
+	if (node->m_Children.size() == 0)
+	{
+		// Evaluate the current board state
+		//// TODO: Just use random values for now. Update later.
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<> dis(-1.0, 1.0);
+		node->m_Value = dis(gen);
+	}
+	else
+	{
+		TreeNode* bestNode = NULL;
+		for (TreeNode* childNode : node->m_Children)
+		{
+			EvaluateNode(childNode);
+			if (bestNode == NULL ||
+				(node->m_Turn == BLACK && childNode->m_Value < bestNode->m_Value) ||
+				(node->m_Turn == WHITE && childNode->m_Value > bestNode->m_Value))
+			{
+				bestNode = childNode;
+			}
+		}
+		node->m_Value = bestNode->m_Value;
+		node->m_BestChildNode = bestNode;
+	}
 }
 
 
@@ -270,14 +300,14 @@ void TreeNode::EvaluateNodes(TreeNode* rootNode)
 TreeNode* TreeNode::SelectMove(TreeNode* rootNode, std::pair<int, int> move)
 {
 	TreeNode* newRoot = NULL;
-	for (TreeNode* node : rootNode->m_Children)
+	for (TreeNode* childNode : rootNode->m_Children)
 	{
-		if (node->m_LastMove == move)
+		if (childNode->m_LastMove == move)
 		{
-			newRoot = node;
-			rootNode->m_Children.erase(std::remove(rootNode->m_Children.begin(), rootNode->m_Children.end(), node), rootNode->m_Children.end());
+			newRoot = childNode;
+			rootNode->m_Children.erase(std::remove(rootNode->m_Children.begin(), rootNode->m_Children.end(), childNode), rootNode->m_Children.end());
 			delete rootNode;
-			node->m_Parent = NULL;
+			childNode->m_Parent = NULL;
 			break;
 		}
 	}

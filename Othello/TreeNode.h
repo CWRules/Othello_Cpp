@@ -31,7 +31,7 @@ public:
 	void ReadBoardState(std::string fileName);
 	std::string PrintBoardState();
 	static void MakeTree(TreeNode* rootNode, int searchTime);
-	static void EvaluateNodes(TreeNode* rootNode);
+	static void EvaluateNode(TreeNode* node);
 	static TreeNode* SelectMove(TreeNode* rootNode, std::pair<int, int> move);
 
 private:
@@ -42,6 +42,8 @@ private:
 	int m_Turn;
 	std::pair<int, int> m_LastMove;
 	bool m_GameOver;
+	double m_Value;
+	TreeNode* m_BestChildNode;
 
 	void UpdateAdjacentCells(int x, int y);
 	void MakeChildren();

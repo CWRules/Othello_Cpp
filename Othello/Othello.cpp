@@ -14,6 +14,8 @@ int main()
 
 	//// TESTING
 	TreeNode::MakeTree(startingNode, 10);
-	TreeNode* newRoot = TreeNode::SelectMove(startingNode, std::make_pair(2, 3));
-	std::cout << newRoot->PrintBoardState();
+	TreeNode::EvaluateNode(startingNode);
+	//TreeNode* newRoot = TreeNode::SelectMove(startingNode, std::make_pair(2, 3));
+
+	std::cout << startingNode->PrintBoardState();
 }
