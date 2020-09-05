@@ -220,14 +220,13 @@ void TreeNode::MakeChildren()
 
 
 // Build the game tree
-void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
+int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 {
 	int depth = 1;
 	std::vector<TreeNode*> nodeList = { rootNode };
 	std::vector<TreeNode*> childNodeList;
 	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
 
-	std::cout << "Building tree...\n";
 	while (true)
 	{
 		std::chrono::steady_clock::time_point layerStartTime = std::chrono::steady_clock::now();
@@ -250,8 +249,7 @@ void TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 
 		if (childNodeList.size() == 0 || totalTimeAfterNextLayer > searchTime)
 		{
-			std::cout << "Stopped at depth " << depth  << " after " << totalTime << " seconds.\n";
-			return;
+			return depth;
 		}
 		else
 		{
@@ -290,6 +288,7 @@ void TreeNode::EvaluateNode(TreeNode* node)
 
 
 // Determine the value of the board state in the given node
+// Black is the minimizing player, white is maximizing
 void TreeNode::EvaluateBoardState(TreeNode* node)
 {
 	// If the game is over, just count the discs of each color
@@ -311,23 +310,27 @@ void TreeNode::EvaluateBoardState(TreeNode* node)
 }
 
 
-// Prune the tree so that a specific child becomes the new root
-// If the given move is not vaid, return NULL. Otherwise return the new root node.
+// Find the child node that matches the given move
+// If the given move is not vaid, return NULL.
 TreeNode* TreeNode::SelectMove(TreeNode* rootNode, std::pair<int, int> move)
 {
-	TreeNode* newRoot = NULL;
 	for (TreeNode* childNode : rootNode->m_Children)
 	{
 		if (childNode->m_LastMove == move)
 		{
-			newRoot = childNode;
-			rootNode->m_Children.erase(std::remove(rootNode->m_Children.begin(), rootNode->m_Children.end(), childNode), rootNode->m_Children.end());
-			delete rootNode;
-			childNode->m_Parent = NULL;
-			break;
+			return childNode;
 		}
 	}
-	return newRoot;
+	return NULL;
+}
+
+
+// Prune the tree so that the given child node becomes the new root
+void TreeNode::ChangeRoot(TreeNode* rootNode, TreeNode* childNode)
+{
+	rootNode->m_Children.erase(std::remove(rootNode->m_Children.begin(), rootNode->m_Children.end(), childNode), rootNode->m_Children.end());
+	delete rootNode;
+	childNode->m_Parent = NULL;
 }
 
 
