@@ -6,12 +6,11 @@ Date: 2020-08-20
 */
 
 #include "TreeNode.h"
-#include <chrono>
 #include <iostream>
 
 int main()
 {
-	TreeNode* currentRootNode = new TreeNode("..\\starting_board_small.txt");
+	TreeNode* currentRootNode = new TreeNode("..\\starting_board_tiny.txt");
 	int currentTurn = BLACK;
 	int playerColor = BLACK;
 
@@ -21,10 +20,10 @@ int main()
 
 		// Update game tree
 		std::cout << "Building game tree...\n";
-		std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+		TIMEPOINT startTime = CURRENT_TIME;
 		int depth = TreeNode::MakeTree(currentRootNode, 10);
-		std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
-		int makeTreeTime = (int)std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+		TIMEPOINT currentTime = CURRENT_TIME;
+		int makeTreeTime = DURATION(startTime, currentTime);
 		std::cout << "Stopped at depth " << depth << " after " << makeTreeTime << " seconds.\n";
 
 		TreeNode* newRootNode = NULL;

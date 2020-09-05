@@ -4,7 +4,6 @@ This class implements the tree of board states used by the AI to evaluate moves.
 
 #include "TreeNode.h"
 #include <fstream>
-#include <chrono>
 #include <algorithm>
 #include <iostream>
 
@@ -225,11 +224,11 @@ int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 	int depth = 1;
 	std::vector<TreeNode*> nodeList = { rootNode };
 	std::vector<TreeNode*> childNodeList;
-	std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+	TIMEPOINT startTime = CURRENT_TIME;
 
 	while (true)
 	{
-		std::chrono::steady_clock::time_point layerStartTime = std::chrono::steady_clock::now();
+		TIMEPOINT layerStartTime = CURRENT_TIME;
 
 		for (TreeNode* node : nodeList)
 		{
@@ -241,13 +240,12 @@ int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 		}
 
 		// Estimate time for next layer
-		std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
-		int totalTime = (int)std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
-		int layerTime = (int)std::chrono::duration_cast<std::chrono::seconds>(currentTime - layerStartTime).count();
-		int nextLayerTimeEstimate = layerTime * (childNodeList.size() / nodeList.size());
-		int totalTimeAfterNextLayer = totalTime + nextLayerTimeEstimate;
+		TIMEPOINT currentTime = CURRENT_TIME;
+		int totalTime = DURATION(startTime, currentTime);
+		int layerTime = DURATION(layerStartTime, currentTime);
+		int estimatedTimeAfterNextLayer = totalTime + (layerTime * (childNodeList.size() / nodeList.size()));
 
-		if (childNodeList.size() == 0 || totalTimeAfterNextLayer > searchTime)
+		if (childNodeList.size() == 0 || estimatedTimeAfterNextLayer > searchTime)
 		{
 			return depth;
 		}

@@ -1,13 +1,18 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include <set>
+#include <chrono>
+#include <random>
+
 #define EMPTY 0
 #define BLACK -1
 #define WHITE 1
 
-#include <vector>
-#include <string>
-#include <set>
-#include <random>
+#define TIMEPOINT std::chrono::steady_clock::time_point
+#define CURRENT_TIME std::chrono::steady_clock::now()
+#define DURATION(a, b) (int)std::chrono::duration_cast<std::chrono::seconds>(b - a).count();
 
 const std::vector<std::pair<int, int>> DIRECTIONS =
 	{ std::make_pair(-1, -1),
