@@ -8,6 +8,16 @@ Date: 2020-08-20
 #include "TreeNode.h"
 #include <iostream>
 
+void UpdateGameTree(TreeNode* currentRootNode)
+{
+	std::cout << "Building game tree...\n";
+	TIMEPOINT startTime = CURRENT_TIME;
+	int depth = TreeNode::MakeTree(currentRootNode, 1, 6);
+	TIMEPOINT currentTime = CURRENT_TIME;
+	int elapsedTime = DURATION(startTime, currentTime);
+	std::cout << "Stopped at depth " << depth << " after " << elapsedTime << " seconds.\n\n";
+}
+
 int main()
 {
 	TreeNode* currentRootNode = new TreeNode("..\\starting_board.txt");
@@ -36,18 +46,11 @@ int main()
 		}
 	}
 	std::cout << "\nSelected " << (playerColor == BLACK ? "Black" : "White") << "\n\n";
+	UpdateGameTree(currentRootNode);
 
 	while (true)
 	{
-		std::cout << currentRootNode->PrintBoardState();
-
-		// Update game tree
-		std::cout << "\nBuilding game tree...\n";
-		TIMEPOINT startTime = CURRENT_TIME;
-		int depth = TreeNode::MakeTree(currentRootNode, 10);
-		TIMEPOINT currentTime = CURRENT_TIME;
-		int elapsedTime = DURATION(startTime, currentTime);
-		std::cout << "Stopped at depth " << depth << " after " << elapsedTime << " seconds.\n\n" << (currentTurn == BLACK ? "Black" : "White") << " turn\n";
+		std::cout << currentRootNode->PrintBoardState() << "\n" << (currentTurn == BLACK ? "Black" : "White") << " turn\n";
 
 		TreeNode* newRootNode = NULL;
 		if (currentTurn == playerColor)
@@ -95,13 +98,9 @@ int main()
 		else
 		{
 			// AI turn
-			std::cout << "\nEvaluating...\n";
-			TIMEPOINT startTime = CURRENT_TIME;
+			UpdateGameTree(currentRootNode);
 			TreeNode::EvaluateNode(currentRootNode);
 			newRootNode = currentRootNode->m_BestChildNode;
-			TIMEPOINT currentTime = CURRENT_TIME;
-			int elapsedTime = DURATION(startTime, currentTime);
-			std::cout << "Finished after " << elapsedTime << " seconds\n\n";
 		}
 
 		TreeNode::ChangeRoot(currentRootNode, newRootNode);

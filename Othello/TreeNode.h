@@ -38,7 +38,7 @@ public:
 	std::string PrintBoardState();
 	int WinningPlayer();
 
-	static int MakeTree(TreeNode* rootNode, int searchTime);
+	static int MakeTree(TreeNode* rootNode, int searchTime, int maxDepth);
 	static void EvaluateNode(TreeNode* node);
 	static void EvaluateBoardState(TreeNode* node);
 	static TreeNode* SelectMove(TreeNode* rootNode, std::pair<int, int> move);

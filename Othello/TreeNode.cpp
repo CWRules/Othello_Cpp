@@ -235,7 +235,7 @@ void TreeNode::MakeChildren()
 
 
 // Build the game tree
-int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
+int TreeNode::MakeTree(TreeNode* rootNode, int searchTime, int maxDepth)
 {
 	int depth = 1;
 	std::vector<TreeNode*> nodeList = { rootNode };
@@ -244,8 +244,6 @@ int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 
 	while (true)
 	{
-		TIMEPOINT layerStartTime = CURRENT_TIME;
-
 		for (TreeNode* node : nodeList)
 		{
 			if (node->m_Children.size() == 0 && node->m_GameOver == false)
@@ -258,10 +256,8 @@ int TreeNode::MakeTree(TreeNode* rootNode, int searchTime)
 		// Estimate time for next layer
 		TIMEPOINT currentTime = CURRENT_TIME;
 		int totalTime = DURATION(startTime, currentTime);
-		int layerTime = DURATION(layerStartTime, currentTime);
-		int estimatedTimeAfterNextLayer = totalTime + (layerTime * (childNodeList.size() / nodeList.size()));
 
-		if (childNodeList.size() == 0 || estimatedTimeAfterNextLayer > searchTime)
+		if (childNodeList.size() == 0 || (totalTime > searchTime && depth >= maxDepth))
 		{
 			return depth;
 		}
