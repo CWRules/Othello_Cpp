@@ -132,6 +132,21 @@ std::string TreeNode::PrintBoardState()
 }
 
 
+// Returns the color of the winning player
+int TreeNode::WinningPlayer()
+{
+	int count = 0;
+	for (std::vector<int> row : m_BoardState)
+	{
+		for (int cell : row)
+		{
+			count += cell;
+		}
+	}
+	return (count > 0) - (count < 0);
+}
+
+
 // Remove the given cell from the set of adjacent cells and add the ones adjacent to it
 void TreeNode::UpdateAdjacentCells(int x, int y)
 {
@@ -175,6 +190,7 @@ void TreeNode::MakeChildren()
 				else if (m_BoardState[cell.first][cell.second] == m_Turn)
 				{
 					cellsToFlip.insert(cellsToFlip.end(), newCells.begin(), newCells.end());
+					break;
 				}
 				else
 				{
