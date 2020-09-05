@@ -10,9 +10,32 @@ Date: 2020-08-20
 
 int main()
 {
-	TreeNode* currentRootNode = new TreeNode("..\\starting_board_tiny.txt");
+	TreeNode* currentRootNode = new TreeNode("..\\starting_board.txt");
 	int currentTurn = BLACK;
-	int playerColor = BLACK;
+	int playerColor;
+	std::string input;
+	
+	while (true)
+	{
+		std::cout << "Enter player color (b/w):\n";
+		std::cin >> input;
+
+		if (input == "b")
+		{
+			playerColor = BLACK;
+			break;
+		}
+		else if (input == "w")
+		{
+			playerColor = WHITE;
+			break;
+		}
+		else
+		{
+			std::cout << "Invalid input\n\n";
+		}
+	}
+	std::cout << "\nSelected " << (playerColor == BLACK ? "Black" : "White") << "\n\n";
 
 	while (true)
 	{
@@ -34,8 +57,6 @@ int main()
 			while (true)
 			{
 				std::cout << "\nEnter move (row,column or pass):\n";
-
-				std::string input;
 				std::cin >> input;
 
 				// Check input is valid
