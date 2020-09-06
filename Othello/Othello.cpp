@@ -20,7 +20,7 @@ void UpdateGameTree(TreeNode* currentRootNode)
 
 int main()
 {
-	TreeNode* currentRootNode = new TreeNode("..\\starting_board.txt");
+	TreeNode* currentRootNode = new TreeNode("..\\starting_board_tiny.txt");
 	int currentTurn = BLACK;
 	int playerColor;
 	std::string input;
@@ -113,13 +113,13 @@ int main()
 		currentTurn = (currentTurn == BLACK ? WHITE : BLACK);
 	}
 
-	std::cout << "Game over\n";
-	int winner = currentRootNode->WinningPlayer();
-	if (winner == BLACK)
+	std::pair<int, int> discCount = currentRootNode->DiscCount();
+	std::cout << "Game over\n" << discCount.first << "-" << discCount.second << "\n";
+	if (discCount.first > discCount.second)
 	{
 		std::cout << "Black wins!\n";
 	}
-	else if (winner == WHITE)
+	else if (discCount.first < discCount.second)
 	{
 		std::cout << "White wins!\n";
 	}

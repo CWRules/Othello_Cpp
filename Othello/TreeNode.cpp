@@ -5,7 +5,6 @@ This class implements the tree of board states used by the AI to evaluate moves.
 #include "TreeNode.h"
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 
 
 // Construct a root note by reading in a board state
@@ -132,18 +131,26 @@ std::string TreeNode::PrintBoardState()
 }
 
 
-// Returns the color of the winning player
-int TreeNode::WinningPlayer()
+// Returns the number of black and white discs
+std::pair<int, int> TreeNode::DiscCount()
 {
-	int count = 0;
+	int blackCount = 0;
+	int whiteCount = 0;
 	for (std::vector<int> row : m_BoardState)
 	{
 		for (int cell : row)
 		{
-			count += cell;
+			if (cell == BLACK)
+			{
+				++blackCount;
+			}
+			else if(cell == WHITE)
+			{
+				++whiteCount;
+			}
 		}
 	}
-	return (count > 0) - (count < 0);
+	return std::make_pair(blackCount, whiteCount);
 }
 
 

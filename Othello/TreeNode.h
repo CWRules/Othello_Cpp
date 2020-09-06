@@ -36,7 +36,7 @@ public:
 
 	void ReadBoardState(std::string fileName);
 	std::string PrintBoardState();
-	int WinningPlayer();
+	std::pair<int, int> DiscCount();
 
 	static int MakeTree(TreeNode* rootNode, int searchTime, int maxDepth);
 	static void EvaluateNode(TreeNode* node);
