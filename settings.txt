@@ -1,5 +1,5 @@
 # Starting board file
-StartingBoard ..\\starting_board_tiny.txt
+StartingBoard starting_board_tiny.txt
 
 # First player (BLACK or WHITE)
 FirstPlayer BLACK

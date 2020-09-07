@@ -103,7 +103,7 @@ void UpdateGameTree(TreeNode* currentRootNode)
 // Main loop
 int main()
 {
-	ReadConfig("..\\settings.txt");
+	ReadConfig("settings.txt");
 	int playerColor = SelectPlayerColor();
 	std::cout << "\nSelected " << (playerColor == BLACK ? "Black" : "White") << "\n\n";
 
@@ -182,14 +182,15 @@ int main()
 	std::cout << "Game over\n" << discCount.first << "-" << discCount.second << "\n";
 	if (discCount.first > discCount.second)
 	{
-		std::cout << "Black wins!\n";
+		std::cout << "Black wins!\n\n";
 	}
 	else if (discCount.first < discCount.second)
 	{
-		std::cout << "White wins!\n";
+		std::cout << "White wins!\n\n";
 	}
 	else
 	{
-		std::cout << "It's a tie!\n";
+		std::cout << "It's a tie!\n\n";
 	}
+	system("pause");
 }
