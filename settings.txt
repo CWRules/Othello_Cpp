@@ -1,0 +1,10 @@
+# Starting board file
+StartingBoard ..\\starting_board_tiny.txt
+
+# First player (BLACK or WHITE)
+FirstPlayer BLACK
+
+# Search time (in seconds) and depth limits
+# Tree building terminates when both limits reached
+MaxSearchTime 1
+MaxSearchDepth 6

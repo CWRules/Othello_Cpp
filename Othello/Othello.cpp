@@ -6,25 +6,67 @@ Date: 2020-08-20
 */
 
 #include "TreeNode.h"
+#include <fstream>
 #include <iostream>
 
-void UpdateGameTree(TreeNode* currentRootNode)
+std::string startingBoardFile;
+int firstPlayer;
+int maxSearchTime;
+int maxSearchDepth;
+
+
+// Read in config file options
+void ReadConfig(std::string fileName)
 {
-	std::cout << "Building game tree...\n";
-	TIMEPOINT startTime = CURRENT_TIME;
-	int depth = TreeNode::MakeTree(currentRootNode, 1, 6);
-	TIMEPOINT currentTime = CURRENT_TIME;
-	int elapsedTime = DURATION(startTime, currentTime);
-	std::cout << "Stopped at depth " << depth << " after " << elapsedTime << " seconds.\n\n";
+	std::ifstream inputFile(fileName);
+
+	if (inputFile.is_open())
+	{
+		std::string line;
+
+		while (std::getline(inputFile, line))
+		{
+			if (line == "" || line[0] == '#')
+			{
+				continue;
+			}
+			
+			std::string option = line.substr(0, line.find(" "));
+			if (option == "StartingBoard")
+			{
+				startingBoardFile = line.substr(line.find(" ") + 1);
+			}
+			else if (option == "FirstPlayer")
+			{
+				std::string color = line.substr(line.find(" ") + 1);
+				if (color == "BLACK")
+				{
+					firstPlayer = BLACK;
+				}
+				else if (color == "WHITE")
+				{
+					firstPlayer = WHITE;
+				}
+			}
+			else if (option == "MaxSearchTime")
+			{
+				maxSearchTime = stoi(line.substr(line.find(" ") + 1));
+			}
+			else if (option == "MaxSearchDepth")
+			{
+				maxSearchDepth = stoi(line.substr(line.find(" ") + 1));
+			}
+		}
+	}
+	inputFile.close();
 }
 
-int main()
+
+// Have the player select their color
+int SelectPlayerColor()
 {
-	TreeNode* currentRootNode = new TreeNode("..\\starting_board_tiny.txt");
-	int currentTurn = BLACK;
-	int playerColor;
 	std::string input;
-	
+
 	while (true)
 	{
 		std::cout << "Enter player color (b/w):\n";
@@ -32,20 +74,41 @@ int main()
 
 		if (input == "b")
 		{
-			playerColor = BLACK;
-			break;
+			return BLACK;
 		}
 		else if (input == "w")
 		{
-			playerColor = WHITE;
-			break;
+			return WHITE;
 		}
 		else
 		{
 			std::cout << "Invalid input\n\n";
 		}
 	}
+}
+
+
+// Update the game tree
+void UpdateGameTree(TreeNode* currentRootNode)
+{
+	std::cout << "Building game tree...\n";
+	TIMEPOINT startTime = CURRENT_TIME;
+	int depth = TreeNode::MakeTree(currentRootNode, maxSearchTime, maxSearchDepth);
+	TIMEPOINT currentTime = CURRENT_TIME;
+	int elapsedTime = DURATION(startTime, currentTime);
+	std::cout << "Stopped at depth " << depth << " after " << elapsedTime << " seconds.\n\n";
+}
+
+
+// Main loop
+int main()
+{
+	ReadConfig("..\\settings.txt");
+	int playerColor = SelectPlayerColor();
 	std::cout << "\nSelected " << (playerColor == BLACK ? "Black" : "White") << "\n\n";
+
+	TreeNode* currentRootNode = new TreeNode(startingBoardFile);
+	int currentTurn = firstPlayer;
 	UpdateGameTree(currentRootNode);
 
 	while (true)
@@ -57,6 +120,8 @@ int main()
 		{
 			// Player turn
 			std::pair<int, int> move;
+			std::string input;
+
 			while (true)
 			{
 				std::cout << "\nEnter move (row,column or pass):\n";
